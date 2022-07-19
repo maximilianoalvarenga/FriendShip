@@ -1,9 +1,9 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 
- // imports
+ // imports 
  export default class BoatSearch extends LightningElement {
     @api isLoading = false;
-    
+    @track teste = '';
     // Handles loading event
     handleLoading() { 
         this.isLoading = true;
@@ -17,7 +17,7 @@ import { LightningElement, api } from 'lwc';
     // Handles search boat event
     // This custom event comes from the form
     searchBoats(event) {
-        console.log('Id tipo Bot: '+ event.detail );
+        this.template.querySelector('c-boat-search-results').searchBoats(event.detail);
     }
     
     createNewBoat() { }
