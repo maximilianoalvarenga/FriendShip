@@ -24,6 +24,20 @@ yarn-error.log*
 # Dependency directories
 node_modules/
 
+# Default directories
+.husky/
+.vscode/
+config/
+manifest/
+scripts/
+.eslintignore
+.forceignore
+.prettierignore
+.prettierrc
+jest.config.js
+package.json
+sfdx-project.json
+
 # Eslint cache
 .eslintcache
 
