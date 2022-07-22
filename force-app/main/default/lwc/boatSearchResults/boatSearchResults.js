@@ -3,6 +3,9 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getBoats from '@salesforce/apex/BoatDataService.getBoats';
 import updateBoatList from '@salesforce/apex/BoatDataService.updateBoatList';
+import { publish, MessageContext } from 'lightning/messageService';
+import BoatMC from '@salesforce/messageChannel/BoatMessageChannel__c';
+
 
 const SUCCESS_TITLE = 'Success';
 const MESSAGE_SHIP_IT     = 'Ship it!';
@@ -24,7 +27,9 @@ export default class BoatSearchResults extends LightningElement {
     { label: 'Description', fieldName: 'Description__c', type: 'text', editable: 'true' }
   ];
   // wired message context
+  @wire(MessageContext)
   messageContext;
+
   // wired getBoats method
   @wire(getBoats, {boatTypeId: '$boatTypeId'})
   wiredBoats({ error, data }) {
@@ -43,9 +48,11 @@ export default class BoatSearchResults extends LightningElement {
   // public function that updates the existing boatTypeId property
   // uses notifyLoading
   @api
-  searchBoats(boatTypeId) {
-    this.boatTypeId = boatTypeId
-  }
+    searchBoats(boatTypeId) {
+        this.isLoading = true;
+        this.notifyLoading(this.isLoading);
+        this.boatTypeId = boatTypeId;
+    }
   
   // this public function must refresh the boats asynchronously
   // uses notifyLoading
@@ -60,12 +67,14 @@ export default class BoatSearchResults extends LightningElement {
   
   // this function must update selectedBoatId and call sendMessageService
   updateSelectedTile(event) {
-    console.log(event.detail.boatId)
+    console.log(event.detail.boatId);
+    this.sendMessageService(this.selectedBoatId);
   }
   
   // Publishes the selected boat Id on the BoatMC.
   sendMessageService(boatId) { 
     // explicitly pass boatId to the parameter recordId
+    publish(this.messageContext, BoatMC, { recordId : boatId });
   }
   
   // The handleSave method must save the changes in the Boat Editor
@@ -106,5 +115,11 @@ export default class BoatSearchResults extends LightningElement {
     
   }
   // Check the current value of isLoading before dispatching the doneloading or loading custom event
-  notifyLoading(isLoading) { }
+  notifyLoading(isLoading) {
+    if (isLoading) {
+      this.dispatchEvent(new CustomEvent('loading'));
+  } else {
+      this.dispatchEvent(CustomEvent('doneloading'));
+  }
+  }
 }

@@ -20,5 +20,13 @@ import { LightningElement, api, track } from 'lwc';
         this.template.querySelector('c-boat-search-results').searchBoats(event.detail);
     }
     
-    createNewBoat() { }
+    createNewBoat() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Boat__c',
+                actionName: 'new'
+            }
+        });
+    }
   }
