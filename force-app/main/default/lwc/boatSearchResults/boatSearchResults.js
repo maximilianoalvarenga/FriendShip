@@ -15,9 +15,9 @@ const ERROR_VARIANT = 'error';
 
 export default class BoatSearchResults extends LightningElement {
   selectedBoatId;
-  @track boatTypeId = '';
+  boatTypeId = '';
   @track boats;
-  @track draftValues123;
+  @track draftValues;
   isLoading = false;
   
   columns = [
@@ -33,16 +33,15 @@ export default class BoatSearchResults extends LightningElement {
   // wired getBoats method
   @wire(getBoats, {boatTypeId: '$boatTypeId'})
   wiredBoats({ error, data }) {
-    const doneloadingEvent = new CustomEvent('doneloading', {
-        detail: this.isLoading
-    });
     if (data) {
         this.boats = data;
-        this.dispatchEvent(doneloadingEvent);
-        console.log(data);
       } else if (error) {
-        console.log(error);
+        this.error = result.error;
+        this.boats = undefined;
       }
+
+      this.isLoading = false;
+      this.notifyLoading(this.isLoading);
   }
   
   // public function that updates the existing boatTypeId property
@@ -67,14 +66,14 @@ export default class BoatSearchResults extends LightningElement {
   
   // this function must update selectedBoatId and call sendMessageService
   updateSelectedTile(event) {
-    console.log(event.detail.boatId);
+    this.selectedBoatId = event.detail.boatId;
     this.sendMessageService(this.selectedBoatId);
   }
   
   // Publishes the selected boat Id on the BoatMC.
   sendMessageService(boatId) { 
     // explicitly pass boatId to the parameter recordId
-    publish(this.messageContext, BoatMC, { recordId : boatId });
+    publish(this.messageContext, BoatMC, { recordId : boatId }); 
   }
   
   // The handleSave method must save the changes in the Boat Editor
