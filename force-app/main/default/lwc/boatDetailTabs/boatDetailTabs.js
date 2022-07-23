@@ -68,14 +68,9 @@ export default class BoatDetailTabs extends NavigationMixin(LightningElement) {
         this.subscription = subscribe(
             this.messageContext,
             BOATMC,
-            (message) => this.handleMessage(message),
+            (message) => this.boatId = message.recordId,
             {scope: APPLICATION_SCOPE}
         );
-    }
-    
-    // Handler for message received by component
-    handleMessage(message) {
-        this.boatId = message.recordId;
     }
     
     // Calls subscribeMC()
