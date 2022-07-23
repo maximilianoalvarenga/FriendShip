@@ -1,9 +1,10 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import getSimilarBoats from '@salesforce/apex/BoatDataService.getSimilarBoats';
+import { NavigationMixin } from 'lightning/navigation';
 
 // imports
 // import getSimilarBoats
-export default class SimilarBoats extends LightningElement {
+export default class SimilarBoats extends NavigationMixin(LightningElement) {
     // Private
     currentBoat;
     relatedBoats;
